@@ -1,0 +1,25 @@
+name: Build Windows Wheel
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14-dev'
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Install Maturin
+        run: pip install maturin
+      - name: Build Wheel
+        run: maturin build --release --target x86_64-pc-windows-msvc
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: headroom-windows-wheel
+          path: target/wheels/*.whl
